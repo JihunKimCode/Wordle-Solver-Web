@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let possibleWords = [];
 
+    // Load all possible words from txt file
     async function loadPossibleWordsFromFile(filePath) {
         try {
             const response = await fetch(filePath);
@@ -73,10 +74,20 @@ document.addEventListener('DOMContentLoaded', function () {
         // Ask the user if they have a preferred starting word
         const preferStartWord = confirm("Click 'OK' to set the starting word with your preferred");
         
-        if (preferStartWord) {
+        while (preferStartWord) {
             preferredStartWord = prompt("Enter your preferred starting word:");
-        }
         
+            // Regular expression to check if the input only contains alphabets
+            const onlyAlphabetsRegex = /^[a-zA-Z]{5}$/;
+        
+            if (!onlyAlphabetsRegex.test(preferredStartWord)) {
+                alert("Please enter a word containing only five alphabets.");
+            } else {
+                preferredStartWord = preferredStartWord.toLowerCase();
+                break;
+            }
+        }
+               
         while (true) {
             startButton.style.display = 'none';
             instruction.style.display = 'block';
@@ -93,15 +104,16 @@ document.addEventListener('DOMContentLoaded', function () {
             let feedback = [];
     
             while (true) {
-                suggestionContainer.innerHTML += `<div class="container">
-                                                    <p>Attempt ${attempts}: ${guess}</p>
-                                                    <div class="box" onclick="changeColor(this, 0)">${guess[0].toUpperCase()}</div>
-                                                    <div class="box" onclick="changeColor(this, 1)">${guess[1].toUpperCase()}</div>
-                                                    <div class="box" onclick="changeColor(this, 2)">${guess[2].toUpperCase()}</div>
-                                                    <div class="box" onclick="changeColor(this, 3)">${guess[3].toUpperCase()}</div>
-                                                    <div class="box" onclick="changeColor(this, 4)">${guess[4].toUpperCase()}</div>
-                                                </div>`;
-                submitBtn.innerHTML = `<br><button id="sendFeedbackBtn">Send Feedback</button>`;
+                suggestionContainer.innerHTML += `
+                                        <div class="container">
+                                            <p>Attempt ${attempts}: ${guess}</p>
+                                            <div class="box" onclick="changeColor(this, 0)">${guess[0].toUpperCase()}</div>
+                                            <div class="box" onclick="changeColor(this, 1)">${guess[1].toUpperCase()}</div>
+                                            <div class="box" onclick="changeColor(this, 2)">${guess[2].toUpperCase()}</div>
+                                            <div class="box" onclick="changeColor(this, 3)">${guess[3].toUpperCase()}</div>
+                                            <div class="box" onclick="changeColor(this, 4)">${guess[4].toUpperCase()}</div>
+                                        </div>`;
+                submitBtn.innerHTML = `<button id="sendFeedbackBtn">Send Feedback</button>`;
     
                 // Wrap the feedback gathering logic in a Promise
                 await new Promise((resolve) => {
@@ -131,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
                 });
-    
                 break; // Break from the inner loop after resolving the Promise
             }
     
@@ -163,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
 let selectedColors = [0, 0, 0, 0, 0];
 let feedbackInput;
 
+// Change Color of each box
 function changeColor(box, index) {
     const colors = ['#787c7f', '#c8b653', '#6ca965'];
     let currentColor = selectedColors[index] || 0;
