@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const startButton = document.getElementById('start-button');
     const instruction = document.getElementById('instruction');
     const suggestionContainer = document.getElementById('suggestions');
-    const resultContainer = document.getElementById('result');
+    // const resultContainer = document.getElementById('result');
     const submitBtn = document.getElementById('submit');
 
     let possibleWords = [];
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let preferredStartWord = null;
 
         // Ask the user if they have a preferred starting word
-        const preferStartWord = confirm("Do you have a preferred starting word?");
+        const preferStartWord = confirm("Click 'OK' to set the starting word with your preferred");
         
         if (preferStartWord) {
             preferredStartWord = prompt("Enter your preferred starting word:");
@@ -93,15 +93,14 @@ document.addEventListener('DOMContentLoaded', function () {
             let feedback = [];
     
             while (true) {
-                suggestionContainer.innerHTML += `<br>Attempt ${attempts}: ${guess}`;
-                suggestionContainer.innerHTML += `<br><div class="container">
-                                                    <div class="box" onclick="changeColor(this, 0)">${guess[0]}</div>
-                                                    <div class="box" onclick="changeColor(this, 1)">${guess[1]}</div>
-                                                    <div class="box" onclick="changeColor(this, 2)">${guess[2]}</div>
-                                                    <div class="box" onclick="changeColor(this, 3)">${guess[3]}</div>
-                                                    <div class="box" onclick="changeColor(this, 4)">${guess[4]}</div>
+                suggestionContainer.innerHTML += `<div class="container">
+                                                    <p>Attempt ${attempts}: ${guess}</p>
+                                                    <div class="box" onclick="changeColor(this, 0)">${guess[0].toUpperCase()}</div>
+                                                    <div class="box" onclick="changeColor(this, 1)">${guess[1].toUpperCase()}</div>
+                                                    <div class="box" onclick="changeColor(this, 2)">${guess[2].toUpperCase()}</div>
+                                                    <div class="box" onclick="changeColor(this, 3)">${guess[3].toUpperCase()}</div>
+                                                    <div class="box" onclick="changeColor(this, 4)">${guess[4].toUpperCase()}</div>
                                                 </div>`;
-                // Add a button to send feedback
                 submitBtn.innerHTML = `<br><button id="sendFeedbackBtn">Send Feedback</button>`;
     
                 // Wrap the feedback gathering logic in a Promise
@@ -136,14 +135,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 break; // Break from the inner loop after resolving the Promise
             }
     
+            // Store Game Play
             previousGuesses.push([guess, feedback]);
-            resultContainer.innerHTML += `<p>${feedback}</p>`;
+            // resultContainer.innerHTML += `<p>${feedback}</p>`;
     
+            // Check to end Wordle Game
             if (feedback.split("🟩").length - 1 === 5) {
                 instruction.style.display = 'none';
                 submitBtn.style.display = 'none';
-                suggestionContainer.innerHTML += `<p>Congratulations! The word was '${guess}'. It took ${attempts} attempts to guess.</p>`;
-                suggestionContainer.innerHTML += `<p>Refresh Website to play new Game</p>`;
+                suggestionContainer.innerHTML += `
+                    <p>Congratulations!</p>
+                    <p>It took ${attempts} attempts to guess</p>
+                    <p>Refresh the website to play a new Game</p>`;
+                break;
+            } else if(attempts === 6) {
+                instruction.style.display = 'none';
+                submitBtn.style.display = 'none';
+                suggestionContainer.innerHTML += `
+                    <p>You already used all six attempts to guess</p>
+                    <p>Refresh website to play a new Game</p>`;
                 break;
             }
         }
