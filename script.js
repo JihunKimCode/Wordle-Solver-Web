@@ -1,11 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
     const startButton = document.getElementById('start-button');
+    const instruction = document.getElementById('instruction');
     const suggestionContainer = document.getElementById('suggestions');
     const resultContainer = document.getElementById('result');
     const submitBtn = document.getElementById('submit');
 
     let possibleWords = [];
 
+    async function loadPossibleWordsFromFile(filePath) {
+        try {
+            const response = await fetch(filePath);
+            const wordsText = await response.text();
+            possibleWords = wordsText.split('\n').map(word => word.trim()).filter(word => word !== '');
+        } catch (error) {
+            console.error('Error loading possible words:', error);
+        }
+    }
+
+    // Evaluate Each Guess by Comapring to the Feedback
     function evaluateGuess(targetWord, guess, feedback) {
         feedback = [];
         let remainingSecretLetters = [...targetWord];
@@ -28,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return feedback.join("");
     }
     
+    // Apply Bayesian Model to find the best next word
     function bayesianChooseWord(possibleWords, previousGuesses) {
         let scores = {};
 
@@ -46,17 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return bestWords[Math.floor(Math.random() * bestWords.length)];
     }
-
-    async function loadPossibleWordsFromFile(filePath) {
-        try {
-            const response = await fetch(filePath);
-            const wordsText = await response.text();
-            possibleWords = wordsText.split('\n').map(word => word.trim()).filter(word => word !== '');
-        } catch (error) {
-            console.error('Error loading possible words:', error);
-        }
-    }
-
+    
+    startButton.addEventListener('click', startGame);
+    
     async function startGame() {
         const filePath = 'https://raw.githubusercontent.com/3b1b/videos/master/_2022/wordle/data/allowed_words.txt';
         await loadPossibleWordsFromFile(filePath);
@@ -70,11 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (preferStartWord) {
             preferredStartWord = prompt("Enter your preferred starting word:");
-            // You may want to add additional validation for the entered word
         }
         
         while (true) {
             startButton.style.display = 'none';
+            instruction.style.display = 'block';
             attempts += 1;
             let guess = bayesianChooseWord(possibleWords, previousGuesses);
         
@@ -117,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 else if (f === 2) return "🟩";
                             });
                         } else {
-                            alert("Invalid feedback. Please provide feedback as grey, yellow, and green.");
+                            alert("Invalid feedback. Please provide feedback as gray, yellow, and green.");
                             return; // Do not resolve the Promise if the feedback is invalid
                         }
     
@@ -135,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
             resultContainer.innerHTML += `<p>${feedback}</p>`;
     
             if (feedback.split("🟩").length - 1 === 5) {
+                instruction.style.display = 'none';
                 submitBtn.style.display = 'none';
                 suggestionContainer.innerHTML += `<p>Congratulations! The word was '${guess}'. It took ${attempts} attempts to guess.</p>`;
                 suggestionContainer.innerHTML += `<p>Refresh Website to play new Game</p>`;
@@ -142,8 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }    
-    
-    startButton.addEventListener('click', startGame);
 });
 
 let selectedColors = [0, 0, 0, 0, 0];
