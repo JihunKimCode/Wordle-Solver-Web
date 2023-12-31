@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const startButton = document.getElementById('start-button');
     const instruction = document.getElementById('instruction');
-    const suggestionContainer = document.getElementById('suggestions');
+    const suggestion = document.getElementById('suggestions');
     // const resultContainer = document.getElementById('result');
     const submitBtn = document.getElementById('submit');
 
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let feedback = [];
     
             while (true) {
-                suggestionContainer.innerHTML += `
+                suggestion.innerHTML += `
                                         <div class="container">
                                             <p>Attempt ${attempts}: ${guess}</p>
                                             <div class="box" onclick="changeColor(this, 0)">${guess[0].toUpperCase()}</div>
@@ -152,19 +152,21 @@ document.addEventListener('DOMContentLoaded', function () {
     
             // Check to end Wordle Game
             if (feedback.split("🟩").length - 1 === 5) {
+                // Get the correct guess
                 instruction.style.display = 'none';
                 submitBtn.style.display = 'none';
-                suggestionContainer.innerHTML += `
+                suggestion.innerHTML += `
                     <p>Congratulations!</p>
                     <p>It took ${attempts} attempts to guess</p>
-                    <p>Refresh the website to play a new Game</p>`;
+                    <p>Refresh the webpage to play a new game</p>`;
                 break;
             } else if(attempts === 6) {
+                // Fail to guess the word in six attempts
                 instruction.style.display = 'none';
                 submitBtn.style.display = 'none';
-                suggestionContainer.innerHTML += `
+                suggestion.innerHTML += `
                     <p>You already used all six attempts to guess</p>
-                    <p>Refresh website to play a new Game</p>`;
+                    <p>Refresh the webpage to play a new game</p>`;
                 break;
             }
         }
