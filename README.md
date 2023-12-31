@@ -1,5 +1,5 @@
-# Wordle-Solver-Website
-https://jihunkimcode.github.io/Wordle-Solver-Website/
+# Wordle-Solver-Web
+https://jihunkimcode.github.io/Wordle-Solver-Web/
 
 # What is this website?
 Using the Bayesian Algorithm, make a model to play [Wordle](https://www.nytimes.com/games/wordle/index.html). The Bayesian model can find the target word in **3.87 on average**.
