@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     async function startGame() {
         // allowed_words? possible_words?
-        const filePath = 'https://raw.githubusercontent.com/3b1b/videos/master/_2022/wordle/data/allowed_words.txt';
+        const filePath = 'https://raw.githubusercontent.com/3b1b/videos/master/_2022/wordle/data/possible_words.txt';
         await loadPossibleWordsFromFile(filePath);
     
         let attempts = 0;
