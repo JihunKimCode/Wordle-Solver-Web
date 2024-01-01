@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let possibleWords = [];
 
+    // Choose Random Start Word
+    function chooseRandomWord() {
+        return possibleWords[Math.floor(Math.random() * possibleWords.length)];
+    }
+
     // Load all possible words from txt file
     async function loadPossibleWordsFromFile(filePath) {
         try {
@@ -64,7 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
     startButton.addEventListener('click', startGame);
     
     async function startGame() {
-        const filePath = 'https://raw.githubusercontent.com/3b1b/videos/master/_2022/wordle/data/possible_words.txt';
+        // allowed_words? possible_words?
+        const filePath = 'https://raw.githubusercontent.com/3b1b/videos/master/_2022/wordle/data/allowed_words.txt';
         await loadPossibleWordsFromFile(filePath);
     
         let attempts = 0;
@@ -98,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (attempts === 1 && preferredStartWord) {
                 guess = preferredStartWord;
             } else if (attempts === 1) {
-                guess = "slate";
+                guess = chooseRandomWord();
             }
 
             let feedback = [];
@@ -156,17 +162,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 instruction.style.display = 'none';
                 submitBtn.style.display = 'none';
                 suggestion.innerHTML += `
-                    <p>Congratulations!</p>
-                    <p>It took ${attempts} attempts to guess</p>
-                    <p>Refresh the webpage to play a new game</p>`;
+                    <p>Congratulations! <br>It took ${attempts} attempts to guess.</p>
+                    <button onclick="startNewGame()">Start New Game</button>`;
                 break;
             } else if(attempts === 6) {
                 // Fail to guess the word in six attempts
                 instruction.style.display = 'none';
                 submitBtn.style.display = 'none';
                 suggestion.innerHTML += `
-                    <p>You already used all six attempts to guess</p>
-                    <p>Refresh the webpage to play a new game</p>`;
+                    <p>You already used all six attempts to guess.</p>
+                    <button onclick="startNewGame()">Start New Game</button>`;
                 break;
             }
         }
@@ -178,11 +183,16 @@ let feedbackInput;
 
 // Change Color of each box
 function changeColor(box, index) {
-    const colors = ['#787c7f', '#c8b653', '#6ca965'];
+    const colors = ['#787c7e', '#c9b458', '#6aaa64'];
     let currentColor = selectedColors[index] || 0;
 
     currentColor = (currentColor + 1) % colors.length;
     selectedColors[index] = currentColor;
     box.dataset.color = currentColor;
     box.style.backgroundColor = colors[currentColor];
+}
+
+// Refresh webpage to set new game
+function startNewGame() {
+    location.reload();
 }
