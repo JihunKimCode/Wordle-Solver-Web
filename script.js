@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const startButton = document.getElementById('start-button');
+    const inputText = document.getElementById('inputText');
     const instruction = document.getElementById('instruction');
     const suggestion = document.getElementById('suggestions');
-    // const resultContainer = document.getElementById('result');
     const submitBtn = document.getElementById('submit');
 
     let possibleWords = [];
@@ -66,37 +66,40 @@ document.addEventListener('DOMContentLoaded', function () {
         return bestWords[Math.floor(Math.random() * bestWords.length)];
     }
     
-    startButton.addEventListener('click', startGame);
+    // Add click event listener to the button
+    startButton.addEventListener('click', validateInput);
+
+    // Function to validate input and decide the next step
+    function validateInput() {
+        let preferredStartWord = inputText.value; // Refresh the value from input field
+        const onlyAlphabetsRegex = /^[a-zA-Z]{5}$/; // Regex to match exactly five alphabetic characters
+
+        if (preferredStartWord === "" || onlyAlphabetsRegex.test(preferredStartWord)) {
+            startGame(preferredStartWord);
+        } else {
+            // Invalid input, clear fields and let user re-enter
+            instruction.style.display = 'block';
+            instruction.innerHTML = 'Invalid Word!'
+            instruction.style.color = 'red';
+            inputText.value = ""; // Clear the input field
+            preferredStartWord = ""; // Clear the variable
+        }
+    }
     
-    async function startGame() {
+    async function startGame(preferredStartWord) {
         // allowed_words? possible_words?
         const filePath = 'https://raw.githubusercontent.com/3b1b/videos/master/_2022/wordle/data/possible_words.txt';
         await loadPossibleWordsFromFile(filePath);
-    
+        inputText.style.display = 'none';
+
         let attempts = 0;
         let previousGuesses = [];
-        let preferredStartWord = null;
-
-        // Ask the user if they have a preferred starting word
-        const preferStartWord = confirm("Click 'OK' to set the starting word with your preferred");
-        
-        while (preferStartWord) {
-            preferredStartWord = prompt("Enter your preferred starting word:");
-        
-            // Regular expression to check if the input only contains alphabets
-            const onlyAlphabetsRegex = /^[a-zA-Z]{5}$/;
-        
-            if (!onlyAlphabetsRegex.test(preferredStartWord)) {
-                alert("Please enter a word containing only five alphabets.");
-            } else {
-                preferredStartWord = preferredStartWord.toLowerCase();
-                break;
-            }
-        }
                
         while (true) {
             startButton.style.display = 'none';
             instruction.style.display = 'block';
+            instruction.style.color = 'black';
+            instruction.innerHTML = 'Click each box to change color!'
             attempts += 1;
             let guess = bayesianChooseWord(possibleWords, previousGuesses);
         
